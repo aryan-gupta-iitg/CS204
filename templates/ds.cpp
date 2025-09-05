@@ -33,7 +33,7 @@ class Heap{
 
         ~Heap(){
             free(this->hp);
-            this->hp = NULL;
+            this->hp = nullptr;
         }
 
         void add(T nw){
@@ -178,7 +178,7 @@ class LLst{
     };
 
     // void rev(node * curr, node * par){
-    //     if (curr->nxt != NULL){
+    //     if (curr->nxt != nullptr){
     //         rev(curr->nxt, curr);
     //     }
     //     curr->pre = curr->nxt;
@@ -187,18 +187,18 @@ class LLst{
 
     int sz = 0;
     public:
-        node * head = NULL;
-        node * end = NULL;
+        node * head = nullptr;
+        node * end = nullptr;
         LLst(){}
         void push(T nd){
             node * nw = new node(nd);
-            nw->nxt = NULL;
+            nw->nxt = nullptr;
             nw->pre = end;
-            if (end != NULL){
+            if (end != nullptr){
                 end->nxt = nw;
             }
             end = nw;
-            if (head == NULL){
+            if (head == nullptr){
                 this->head = nw;
             }
             sz++;
@@ -207,22 +207,22 @@ class LLst{
             return sz;
         }
         void pop_back(){
-            if (head == NULL){return;}
+            if (head == nullptr){return;}
             sz -= 1;
             node * tmp = end;
             end = end->pre;
-            if (end != NULL) end->nxt = NULL;
-            if (end == NULL) head = NULL;
+            if (end != nullptr) end->nxt = nullptr;
+            if (end == nullptr) head = nullptr;
             delete tmp;
         }
 
         void pop_front(){
-            if (head == NULL){return;}
+            if (head == nullptr){return;}
             sz -= 1;
             node * tmp = head;
             head = head->nxt;
-            if (head != NULL) head->pre = NULL;
-            if (head == NULL) end = NULL;
+            if (head != nullptr) head->pre = nullptr;
+            if (head == nullptr) end = nullptr;
             delete tmp;
         }
 
@@ -231,21 +231,21 @@ class LLst{
             nw->pre = afterwhich;
             nw->nxt = afterwhich->nxt;
             afterwhich->nxt = nw;
-            if (nw->nxt == NULL){
+            if (nw->nxt == nullptr){
                 end = nw;
             }
             sz += 1;
         }
 
         void erase(node * which){
-            if (which == NULL) return;
-            if (which->pre == NULL && which->nxt == NULL){
-                head = NULL;
-                end = NULL;
+            if (which == nullptr) return;
+            if (which->pre == nullptr && which->nxt == nullptr){
+                head = nullptr;
+                end = nullptr;
                 sz -= 1;
-            }else if (which->nxt == NULL){
+            }else if (which->nxt == nullptr){
                 pop_back();
-            }else if (which->pre == NULL){
+            }else if (which->pre == nullptr){
                 pop_front();
             }else{
                 which->pre->nxt = which->nxt;
@@ -256,7 +256,7 @@ class LLst{
         }
 
         // void reverse(node * from){
-        //     rev(from, NULL);
+        //     rev(from, nullptr);
         //     if (from == this->head){
         //         node * tmp = head;
         //         head = end;
@@ -278,7 +278,7 @@ class circularLinkedList{
     };
     int sz = 0;
     public:
-        node * head = nullptr;
+        node * head = nullptrptr;
         circularLinkedList(){}
         int size(){
             return sz;
@@ -286,7 +286,7 @@ class circularLinkedList{
 
         void push(T val){
             sz += 1;
-            if (head == nullptr){
+            if (head == nullptrptr){
                 node * nw = new node(val);
                 this->head = nw;
                 this->head->nxt = this->head;
@@ -301,10 +301,10 @@ class circularLinkedList{
             head->pre = nw;
         }
 
-        void insert(T val, node * afterwhich=nullptr){
+        void insert(T val, node * afterwhich=nullptrptr){
             sz += 1;
-            if (afterwhich == nullptr) afterwhich = this->head;
-            if (afterwhich == nullptr){
+            if (afterwhich == nullptrptr) afterwhich = this->head;
+            if (afterwhich == nullptrptr){
                 node * nw = new node(val);
                 this->head = nw;
                 this->head->nxt = this->head;
@@ -319,10 +319,10 @@ class circularLinkedList{
         }
 
         void erase(node * which){
-            if (which == nullptr) return;
+            if (which == nullptrptr) return;
             if (sz == 1){
                 delete which;
-                this->head = nullptr;
+                this->head = nullptrptr;
                 sz -= 1;
             }else{
                 which->pre->nxt = which->nxt;
