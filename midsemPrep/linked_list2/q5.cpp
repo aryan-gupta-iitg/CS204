@@ -1,7 +1,7 @@
-#include <iostream>
+#include <bits/stdc++.h>
 
 using namespace std;
-
+#define pi pair<int,int>
 template <class T>
 class LLst{
     class node{
@@ -134,25 +134,50 @@ class LLst{
 //         }
 // };
 
-bool comp(int & a, int & b){
-    return a < b;
+struct ip{
+    int f, s;
+    string str;
+};
+typedef struct ip ip;
+
+bool comp(ip & a, ip & b){
+    if (a.f == b.f){
+        return a.s < b.s;
+    }else{
+        return a.f < b.f;
+    }
+}
+
+vector<string> splitStr(string s, char d){
+    stringstream ss(s);
+    vector<string> out;
+    string token;
+    while (getline(ss, token, d)){
+        out.push_back(token);
+    }
+    return out;
 }
 
 int main(){
     int n;
     cin >> n;
-
-    LLst<int> ll;
+    LLst<ip> ll;
     for (int i=0;i<n;i++){
-        int x;
-        cin >> x;
-        ll.push(x);
+        string s;
+        cin >> s;
+        if (s == "#") break;
+        ip tmp;
+        vector<string> v = splitStr(s, '.');
+        tmp.f = stol(v[0]);
+        tmp.s = stol(v[1]);
+        tmp.str = s;
+        ll.push(tmp);
     }
     ll.insertionSort(comp);
 
     auto curr = ll.head;
     while (curr != nullptr){
-        cout << curr->val << " ";
+        cout << curr->val.str << " ";
         curr = curr->nxt;
     }cout << endl;
     return 0;
