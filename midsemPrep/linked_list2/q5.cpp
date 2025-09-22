@@ -14,14 +14,6 @@ class LLst{
             }
     };
 
-    // void rev(node * curr, node * par){
-    //     if (curr->nxt != nullptr){
-    //         rev(curr->nxt, curr);
-    //     }
-    //     curr->pre = curr->nxt;
-    //     curr->nxt = par;
-    // }
-
     int sz = 0;
     public:
         node * head = nullptr;
@@ -113,14 +105,21 @@ class LLst{
                 i = i->nxt;
             }
         }
-        // void reverse(node * from){
-        //     rev(from, nullptr);
-        //     if (from == this->head){
-        //         node * tmp = head;
-        //         head = end;
-        //         end = tmp;
-        //     }
-        // }
+        void reverse(){ // assuming singly linked list
+            if (sz <= 1) return;
+            auto f = head;
+            auto s = f->nxt;
+            f->nxt = nullptr;
+            while (s != nullptr){
+                auto nxts = s->nxt;
+                f->pre = s;
+                s->nxt = f;
+                f = s;
+                s = nxts;
+            }
+            f->pre = nullptr;
+            swap(head, end);
+        }
 };
 
 // template <>
