@@ -311,7 +311,6 @@ class circularLinkedList{
                 this->head->pre = this->head;
                 return;
             }
-            cout << "here" << endl;
             node * nw = new node(val);
             nw->pre = afterwhich;
             nw->nxt = afterwhich->nxt;
@@ -337,50 +336,50 @@ class circularLinkedList{
 template <class T>
 class Stack{
     T * arr;
-    int * premin;
-    int top;
+    // int * premin;
+    int i;
     int MX_SIZE;
     public:
         Stack(int MX_SIZE = 100000){
             this->MX_SIZE = MX_SIZE;
-            top = -1;
-            premin = new int(MX_SIZE);
-            memset(premin, 1e9+7, sizeof(premin));
+            i = -1;
+            // premin = new int(MX_SIZE);
+            // memset(premin, 1e9+7, sizeof(premin));
             arr = (T *) malloc(MX_SIZE * (sizeof(T)));
+        }
+        bool empty(){
+            return i == -1;
+        }
 
+        bool full(){
+            return i == MX_SIZE-1;
         }
-        bool isempty(){
-            return top == -1;
-        }
-
-        bool isfull(){
-            return top == MX_SIZE-1;
-        }
-        int top(){
-            if (isempty()){
-                return -1e9;
+        T top(){
+            if (empty()){
+                return T();
             }
-            return arr[top];
+            return arr[i];
         }
         int push(T x){
-            if (isfull()){
+            if (full()){
                 return 0;
             }
-            arr[++top] = x;
-            premin[top] = min(arr[top], ((top > 0)?premin[top-1]:1e9+7));
+            arr[++i] = x;
+            // premin[i] = min(arr[i], ((i > 0)?premin[i-1]:1e9+7));
+            return 1;
         }
 
         int pop(){
-            if (isempty()){
+            if (empty()){
                 return -1e9;
             }
-            return arr[top--];
+            return arr[i--];
         }
 
-        int getMin(){
-            if (isempty()){
-                return -1e9;
-            }
-            return premin[top];
-        }
+        // int getMin(){
+        //     if (empty()){
+        //         return -1e9;
+        //     }
+        //     return premin[i];
+        // }
 };
