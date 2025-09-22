@@ -38,7 +38,11 @@ class Stack{
                 return;
             }
             arr[++i] = x;
-            premin[i] = min(arr[i], ((i > 0)?premin[i-1]:INF));
+            if (i > 0){
+                premin[i] = min(arr[i], premin[i-1]);
+            }else{
+                premin[i] = arr[i];
+            }
         }
 
         void pop(){
@@ -56,36 +60,44 @@ class Stack{
         }
 };
 
-int main(){
+int imp[300];
 
-    int n;
-    cin >> n;
-    Stack<int> st;
+string to_postfix(string s){
+    string out;
+    Stack<char> st;
+    int n = s.size();
     for (int i=0;i<n;i++){
-        int t;
-        cin >> t;
-        if (t == 1){
-            int x;
-            cin >> x;
-            st.push(x);
-        }else if (t == 2){
-            st.pop();
-        }else if (t == 3){
-            int x = st.top();
-            if (x == -1e9){
-                cout << "null" << endl;
-            }else{
-                cout << x << endl;
+        if (s[i] >= 'a' && s[i] <= 'z'){
+            out.push_back(s[i]);
+        }else if (s[i] == ')'){
+            while (!st.isempty() && st.top() != '('){
+                out.push_back(st.top());
+                st.pop();
             }
-        }else{
-            int x = st.getMin();
-            if (x == -1e9){
-                cout << "null" << endl;
-            }else{
-                cout << x << endl;
+            if (st.top() == '('){st.pop();}
+        }else{ 
+
+            while (st.isempty() || imp[st.top()] > imp[s[i]]){
+                out.push_back(st.top());
+                st.pop();
             }
+            st.push(s[i]);
         }
     }
-    
-    return 0;
+    while (!st.isempty()){
+        out.push_back(st.top());
+        st.pop();
+    }
+}
+
+int main(){
+    imp['('] = 0;
+    imp['+'] =  1;
+    imp['-'] = 1;
+    imp['*'] = 2;
+    imp['/'] = 2;
+    string s;
+    cin >> s;
+    string pf = to_postfix(s);
+    cout << pf << endl;
 }

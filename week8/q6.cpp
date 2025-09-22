@@ -5,19 +5,13 @@ using namespace std;
 template <class T>
 class Stack{
     T * arr;
-    int * premin;
     int i;
     int MX_SIZE;
     const int INF = 1e9+7;
     public:
-        Stack(int MX_SIZE = 100000){
+        Stack(int MX_SIZE = 1000000){
             this->MX_SIZE = MX_SIZE;
             i = -1;
-            premin = (int *) malloc(MX_SIZE * sizeof(int));
-            for (int i=0;i<MX_SIZE;i++){
-                premin[i] = INF;
-            }
-
             arr = (T *) malloc(MX_SIZE * (sizeof(T)));
         }
         bool isempty(){
@@ -27,9 +21,9 @@ class Stack{
         bool isfull(){
             return i == MX_SIZE-1;
         }
-        int top(){
+        T top(){
             if (isempty()){
-                return -INF;
+                return T();  // Return default value for type T
             }
             return arr[i];
         }
@@ -38,21 +32,25 @@ class Stack{
                 return;
             }
             arr[++i] = x;
-            premin[i] = min(arr[i], ((i > 0)?premin[i-1]:INF));
         }
 
         void pop(){
             if (isempty()){
                 return;
             }
-            arr[i--];
+            i--;
         }
 
-        int getMin(){
-            if (isempty()){
-                return -INF;
+        void insertMin(int m){
+            i++;
+            arr[i] = m;
+            int t = m;
+            int j = i-1;
+            while (j >= 0 && arr[j] < t){
+                arr[j+1] = arr[j];
+                j--;
             }
-            return premin[i];
+            arr[j+1] = t;
         }
 };
 
@@ -65,27 +63,21 @@ int main(){
         int t;
         cin >> t;
         if (t == 1){
-            int x;
-            cin >> x;
-            st.push(x);
+            int m;
+            cin >> m;
+            st.insertMin(m);
         }else if (t == 2){
-            st.pop();
-        }else if (t == 3){
-            int x = st.top();
-            if (x == -1e9){
-                cout << "null" << endl;
+            if (st.isempty()){
+                cout << -1 << endl;
             }else{
-                cout << x << endl;
+                cout << st.top() << endl;
             }
         }else{
-            int x = st.getMin();
-            if (x == -1e9){
-                cout << "null" << endl;
-            }else{
-                cout << x << endl;
+            if (!st.isempty()){
+                st.pop();
             }
         }
     }
-    
+
     return 0;
 }

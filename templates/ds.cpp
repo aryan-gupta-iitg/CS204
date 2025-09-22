@@ -278,7 +278,7 @@ class circularLinkedList{
     };
     int sz = 0;
     public:
-        node * head = nullptrptr;
+        node * head = nullptr;
         circularLinkedList(){}
         int size(){
             return sz;
@@ -286,7 +286,7 @@ class circularLinkedList{
 
         void push(T val){
             sz += 1;
-            if (head == nullptrptr){
+            if (head == nullptr){
                 node * nw = new node(val);
                 this->head = nw;
                 this->head->nxt = this->head;
@@ -301,17 +301,16 @@ class circularLinkedList{
             head->pre = nw;
         }
 
-        void insert(T val, node * afterwhich=nullptrptr){
+        void insert(T val, node * afterwhich=nullptr){
             sz += 1;
-            if (afterwhich == nullptrptr) afterwhich = this->head;
-            if (afterwhich == nullptrptr){
+            if (afterwhich == nullptr) afterwhich = this->head;
+            if (afterwhich == nullptr){
                 node * nw = new node(val);
                 this->head = nw;
                 this->head->nxt = this->head;
                 this->head->pre = this->head;
                 return;
             }
-            cout << "here" << endl;
             node * nw = new node(val);
             nw->pre = afterwhich;
             nw->nxt = afterwhich->nxt;
@@ -319,10 +318,10 @@ class circularLinkedList{
         }
 
         void erase(node * which){
-            if (which == nullptrptr) return;
+            if (which == nullptr) return;
             if (sz == 1){
                 delete which;
-                this->head = nullptrptr;
+                this->head = nullptr;
                 sz -= 1;
             }else{
                 which->pre->nxt = which->nxt;
@@ -332,4 +331,55 @@ class circularLinkedList{
             }
         }
 
+};
+
+template <class T>
+class Stack{
+    T * arr;
+    int * premin;
+    int i;
+    int MX_SIZE;
+    public:
+        Stack(int MX_SIZE = 100000){
+            this->MX_SIZE = MX_SIZE;
+            i = -1;
+            premin = new int(MX_SIZE);
+            memset(premin, 1e9+7, sizeof(premin));
+            arr = (T *) malloc(MX_SIZE * (sizeof(T)));
+
+        }
+        bool isempty(){
+            return i == -1;
+        }
+
+        bool isfull(){
+            return i == MX_SIZE-1;
+        }
+        int top(){
+            if (isempty()){
+                return -1e9;
+            }
+            return arr[i];
+        }
+        int push(T x){
+            if (isfull()){
+                return 0;
+            }
+            arr[++i] = x;
+            premin[i] = min(arr[i], ((i > 0)?premin[i-1]:1e9+7));
+        }
+
+        int pop(){
+            if (isempty()){
+                return -1e9;
+            }
+            return arr[i--];
+        }
+
+        int getMin(){
+            if (isempty()){
+                return -1e9;
+            }
+            return premin[i];
+        }
 };
