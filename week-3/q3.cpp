@@ -1,5 +1,6 @@
 #include <iostream>
-
+#include <string>
+#include <utility>
 using namespace std;
 
 int main(){
@@ -11,23 +12,23 @@ int main(){
     for (int i=0;i<n;i++){
         cin >> a[i];
     }
-    int j = 0;
-    int curr = 0;
-    for (int i=0;i<n;i++){
-        if (a[i]==curr){continue;}
-        cout << i << " " << curr << endl;
-        while (j < n && a[j] != curr){
-            j += 1;
+    int i=0; // before i, all are 0s.
+    int j=n-1; // after j all are 1s.
+    int p = 0; // iterator
+    while (p < j){
+        if (a[p] == 0){
+            swap(a[p], a[i++]);
+        }else if (a[p] == 2){
+            swap(a[p], a[j--]);
+        }else{
+            p++;
         }
-        if (j >= n){j=i+1;curr++;continue;}
-        swap(a[j], a[i]);
-        j += 1;
     }
+
 
     for (int i=0;i<n;i++){
         cout << a[i] << " ";
     }cout << endl;
-
-
+    
     return 0;
 }

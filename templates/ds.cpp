@@ -167,26 +167,17 @@ class Heap{
 
 template <class T>
 class LLst{
-    class node{
-        public:
-            T val;
-            node * nxt;
-            node * pre;
-            node(T val){
-                this->val = val;
-            }
-    };
-
-    // void rev(node * curr, node * par){
-    //     if (curr->nxt != nullptr){
-    //         rev(curr->nxt, curr);
-    //     }
-    //     curr->pre = curr->nxt;
-    //     curr->nxt = par;
-    // }
-
     int sz = 0;
     public:
+        class node{
+            public:
+                T val;
+                node * nxt;
+                node * pre;
+                node(T val){
+                    this->val = val;
+                }
+        };
         node * head = nullptr;
         node * end = nullptr;
         LLst(){}
@@ -382,4 +373,54 @@ class Stack{
         //     }
         //     return premin[i];
         // }
+};
+
+template<class T>
+class chainHash{
+    int (*hf)(T & a);
+    struct hashNode{
+        int val;
+        T key;
+    };
+    typedef struct hashNode hashNode;
+    LLst<hashNode> * tbl;
+    int m;
+    int zero = 0;
+    public:
+        chainHash(int (* hash_func)(T & a), int m = 100003){
+            this->m = m;
+            this->hf = hash_func;
+            this->tbl = new LLst<hashNode>[m];
+        }
+        
+        hashNode * search(T & key){
+            int pos = (hf(key))%m;
+            if ((tbl + pos)->size() == 0){
+                return nullptr;
+            }
+            typename LLst<hashNode>::node* hd = (tbl + pos)->head;
+            
+            while (hd != nullptr){
+                if (hd->val.key == key){
+                    break;
+                }
+                hd = hd->nxt;
+            }
+
+            if (hd == nullptr) return nullptr;
+            return &hd->val;
+        }
+        
+        int& operator[](T key){
+            hashNode * pos = search(key);
+            if (pos == nullptr){
+                hashNode newNode;
+                newNode.key = key;
+                newNode.val = 0;
+                int hashPos = (hf(key))%m;
+                (tbl + hashPos)->push(newNode);
+                pos = search(key);
+            }
+            return pos->val;
+        }
 };
