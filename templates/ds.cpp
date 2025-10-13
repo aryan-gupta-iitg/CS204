@@ -375,22 +375,23 @@ class Stack{
         // }
 };
 
-template<class T>
+template<class T, class V>
 class chainHash{
-    int (*hf)(T & a);
+    V (*hf)(T & a);
     struct hashNode{
-        int val;
+        V val;
         T key;
     };
     typedef struct hashNode hashNode;
     LLst<hashNode> * tbl;
     int m;
-    int zero = 0;
+    V defaultValue;
     public:
-        chainHash(int (* hash_func)(T & a), int m = 100003){
+        chainHash(int (* hash_func)(T & a), int m = 100003, V defaultVal = V()){
             this->m = m;
             this->hf = hash_func;
             this->tbl = new LLst<hashNode>[m];
+            this->defaultValue = defaultVal;
         }
         
         hashNode * search(T & key){
@@ -411,16 +412,28 @@ class chainHash{
             return &hd->val;
         }
         
-        int& operator[](T key){
+        V& operator[](T key){
             hashNode * pos = search(key);
             if (pos == nullptr){
                 hashNode newNode;
                 newNode.key = key;
-                newNode.val = 0;
+                newNode.val = defaultValue;
                 int hashPos = (hf(key))%m;
                 (tbl + hashPos)->push(newNode);
                 pos = search(key);
             }
             return pos->val;
+        }
+        
+        V get(T key, V defaultVal = V()) const {
+            hashNode * pos = const_cast<chainHash*>(this)->search(key);
+            if (pos == nullptr){
+                return defaultVal;
+            }
+            return pos->val;
+        }
+        
+        bool contains(T key) const {
+            return const_cast<chainHash*>(this)->search(key) != nullptr;
         }
 };
