@@ -437,3 +437,60 @@ class chainHash{
             return const_cast<chainHash*>(this)->search(key) != nullptr;
         }
 };
+
+template <class T>
+class Queue{
+    int sz = 0;
+    int l = -1;
+    int r = -1;
+    int mx;
+    T * arr;
+    public:
+        Queue(int MX=1e5){
+            this->mx = MX;
+            arr = new T[this->mx];
+            l = 0;
+            r = 0;
+        }
+
+        void print(){
+            int j = l+1;
+            cout << "Queue: ";
+            for (int i=0;i<this->sz;i++){
+                cout << this->arr[j++] << " ";
+                j %= this->mx;
+            }
+            cout << endl;
+        }
+
+        bool empty(){
+            return (this->sz == 0);
+        }
+
+        bool full(){
+            return (this->sz == this->mx - 1);
+        }
+        
+        T front(){
+            if (!this->empty()) return this->arr[l+1];
+            throw std::runtime_error("Queue is Empty!");
+        }
+
+        T push(T val){
+            if (this->full()) throw runtime_error("Queue is full!");
+            r = (r+1)%this->mx;
+            arr[r] = val;
+            this->sz++;
+            return val;
+        }
+
+        T pop(){
+            if (this->empty()) throw std::runtime_error("Queue is Empty!");
+            l = (l + 1)%this->mx;
+            this->sz--;
+            return arr[l];
+        }
+        int size(){
+            return this->sz;
+        }
+};
