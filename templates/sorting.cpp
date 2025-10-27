@@ -300,6 +300,19 @@ class NCSort{
 };
 
 
-
-
-
+// void bfs(int v, int * vis, int n){
+//     Queue<int> q(n+1);
+//     q.push(v);
+//     vis[v] = 1;
+//     while (q.size() > 0){
+//         auto curr = q.front();
+//         q.pop();
+//         cout << curr << " ";
+//         for (int i=0;i<n;i++){
+//             if (adj[curr][i] && !vis[i]){
+//                 vis[i] = 1;
+//                 q.push(i);
+//             }
+//         }
+//     }
+// }

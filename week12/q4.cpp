@@ -1,5 +1,4 @@
-#include <iostream>
-#include "../templates/ds.cpp"
+#include <bits/stdc++.h>
 
 using namespace std;
 
@@ -11,11 +10,12 @@ class Vector{
     bool _init = 0;
     void expand(){
         int newsize = 2*this->mx;
-        T * tmp = new T[newsize];
-        for (int i=0;i<this->mx;i++){
+        if (newsize == 0) newsize = 1;
+        T * tmp = new T[newsize]();
+        for (int i=0;i<this->sz;i++){
             tmp[i] = arr[i];
         }
-        delete this->arr;
+        delete[] this->arr;
         this->arr = tmp;
         this->mx = newsize;
     }
@@ -119,6 +119,7 @@ class Vector{
         ~Vector(){
             delete[] this->arr;
         }
+        
 };
 
 template <class F, class S>
@@ -133,48 +134,49 @@ class Pair{
         }
 };
 
-Vector<Pair<int, int> > poss;
+void dfs(int v, Vector<int> & col, Vector<int> & vis, int & n, int & m, Vector<Vector<int> > & graph, bool & bip){
+    vis[v] = 1;
+    for (int i=0;i<graph[v].size();i++){
+        auto ele = graph[v][i];
+        cout << v << " " << ele << endl;
 
-void dfs(int i, int j, Vector<Vector<int> > & vis, int & n, int & m, Vector<Vector<int> > & grid){
-    vis[i][j] = 1;
-    for (int l=0;l<poss.size();l++){
-        Pair<int, int> nxt(poss[l].first + i, poss[l].second + j);
-        if (((nxt.first >= 0 && nxt.first < n) && (nxt.second >= 0 && nxt.second < m)) && (!vis[nxt.first][nxt.second] && grid[nxt.first][nxt.second] == 1)){
-            dfs(nxt.first, nxt.second, vis, n, m, grid);
+        if (col[ele] == -1){ // If neighbor is not colored
+            col[ele] = 1 - col[v]; // Color it with the opposite color
+            dfs(ele, col, vis, n, m, graph, bip);
+            if (!bip) return; // Early exit if a conflict is found in recursion
+        }
+        // If neighbor is already colored, check for conflict
+        else if (col[ele] == col[v]){ 
+            bip = false; // Conflict: same color, not bipartite
+            return;
         }
     }
+
 }
 
 int main(){
-    poss.push_back(Pair<int,int>(-1, 0));
-    poss.push_back(Pair<int,int>(0, -1));
-    poss.push_back(Pair<int,int>(1, 0));
-    poss.push_back(Pair<int,int>(0, 1));
-
     int n, m;
     cin >> n >> m;
 
-    Vector<Vector<int> > grid(n, Vector<int>(m, 0));
-    Vector<Vector<int> > vis(n, Vector<int>(m, 0));
+    Vector<Vector<int> > graph(n+1);
+    Vector<int> vis(n+1, 0);
 
-    for (int i=0;i<n;i++){
-        for (int j=0;j<m;j++){
-            int x;
-            cin >> x;
-            grid[i][j] = x;
-        }
+    for (int i=0;i<m;i++){
+        int u, v;
+        cin >> u >> v;
+        graph[u].push(v);
+        graph[v].push(u);
     }
-    int ans = 0;
-    for (int i=0;i<n;i++){
-        for (int j=0;j<m;j++){
-            if (!vis[i][j] && grid[i][j] == 1){
-                dfs(i, j, vis, n, m, grid);
-                ans++;
-            }
+    Vector<int> col(n+1, -1);
+    bool bip = 1;
+    for (int i=1;i<=n;i++){
+        if (!vis[i]){
+            col[i] = 1;
+            dfs(i, col, vis, n, m, graph, bip);
         }
     }
 
-    cout << ans << endl;
+    cout << (bip?"YES":"NO") << endl;
 
     return 0;
 }
