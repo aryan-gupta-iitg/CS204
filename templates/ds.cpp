@@ -167,26 +167,17 @@ class Heap{
 
 template <class T>
 class LLst{
-    class node{
-        public:
-            T val;
-            node * nxt;
-            node * pre;
-            node(T val){
-                this->val = val;
-            }
-    };
-
-    // void rev(node * curr, node * par){
-    //     if (curr->nxt != nullptr){
-    //         rev(curr->nxt, curr);
-    //     }
-    //     curr->pre = curr->nxt;
-    //     curr->nxt = par;
-    // }
-
     int sz = 0;
     public:
+        class node{
+            public:
+                T val;
+                node * nxt;
+                node * pre;
+                node(T val){
+                    this->val = val;
+                }
+        };
         node * head = nullptr;
         node * end = nullptr;
         LLst(){}
@@ -382,4 +373,254 @@ class Stack{
         //     }
         //     return premin[i];
         // }
+};
+
+template<class T, class V>
+class chainHash{
+    V (*hf)(T & a);
+    struct hashNode{
+        V val;
+        T key;
+    };
+    typedef struct hashNode hashNode;
+    LLst<hashNode> * tbl;
+    int m;
+    V defaultValue;
+    public:
+        chainHash(int (* hash_func)(T & a), int m = 100003, V defaultVal = V()){
+            this->m = m;
+            this->hf = hash_func;
+            this->tbl = new LLst<hashNode>[m];
+            this->defaultValue = defaultVal;
+        }
+        
+        hashNode * search(T & key){
+            int pos = (hf(key))%m;
+            if ((tbl + pos)->size() == 0){
+                return nullptr;
+            }
+            typename LLst<hashNode>::node* hd = (tbl + pos)->head;
+            
+            while (hd != nullptr){
+                if (hd->val.key == key){
+                    break;
+                }
+                hd = hd->nxt;
+            }
+
+            if (hd == nullptr) return nullptr;
+            return &hd->val;
+        }
+        
+        V& operator[](T key){
+            hashNode * pos = search(key);
+            if (pos == nullptr){
+                hashNode newNode;
+                newNode.key = key;
+                newNode.val = defaultValue;
+                int hashPos = (hf(key))%m;
+                (tbl + hashPos)->push(newNode);
+                pos = search(key);
+            }
+            return pos->val;
+        }
+        
+        V get(T key, V defaultVal = V()) const {
+            hashNode * pos = const_cast<chainHash*>(this)->search(key);
+            if (pos == nullptr){
+                return defaultVal;
+            }
+            return pos->val;
+        }
+        
+        bool contains(T key) const {
+            return const_cast<chainHash*>(this)->search(key) != nullptr;
+        }
+};
+
+template <class T>
+class Queue{
+    int sz = 0;
+    int l = -1;
+    int r = -1;
+    int mx;
+    T * arr;
+    public:
+        Queue(int MX=1e5){
+            this->mx = MX;
+            arr = new T[this->mx];
+            l = 0;
+            r = 0;
+        }
+
+        void print(){
+            int j = l+1;
+            cout << "Queue: ";
+            for (int i=0;i<this->sz;i++){
+                cout << this->arr[j++] << " ";
+                j %= this->mx;
+            }
+            cout << endl;
+        }
+
+        bool empty(){
+            return (this->sz == 0);
+        }
+
+        bool full(){
+            return (this->sz == this->mx - 1);
+        }
+        
+        T front(){
+            if (!this->empty()) return this->arr[l+1];
+            throw std::runtime_error("Queue is Empty!");
+        }
+
+        T push(T val){
+            if (this->full()) throw runtime_error("Queue is full!");
+            r = (r+1)%this->mx;
+            arr[r] = val;
+            this->sz++;
+            return val;
+        }
+
+        T pop(){
+            if (this->empty()) throw std::runtime_error("Queue is Empty!");
+            l = (l + 1)%this->mx;
+            this->sz--;
+            return arr[l];
+        }
+        int size(){
+            return this->sz;
+        }
+};
+
+template <class T>
+class Vector{
+    int sz;
+    T * arr;
+    int mx;
+    bool _init = 0;
+    void expand(){
+        int newsize = 2*this->mx;
+        T * tmp = new T[newsize];
+        for (int i=0;i<this->mx;i++){
+            tmp[i] = arr[i];
+        }
+        delete this->arr;
+        this->arr = tmp;
+        this->mx = newsize;
+    }
+
+    public:
+        Vector(int sz = 0, T def = T{}){
+            this->mx = 1;
+            if (sz > 0) this->mx = 1<<((int)(ceil(log2(sz))));
+            this->arr = new T[this->mx];
+            for (int i=0;i<this->mx;i++){
+                this->arr[i] = def;
+            }
+            this->sz = sz;
+        }
+
+        Vector(const Vector<T>& other) 
+            : sz(other.sz), mx(other.mx) {
+            // std::cout << "Copy constructor called" << std::endl; // For debugging
+            arr = new T[mx];
+            // Copy all elements from the other array
+            for (int i = 0; i < sz; i++){ // Only need to copy 'sz' elements
+                arr[i] = other.arr[i];
+            }
+        }
+
+        Vector<T>& operator=(const Vector<T>& other){
+            // std::cout << "Copy assignment called" << std::endl; // For debugging
+
+            // 1. Check for self-assignment
+            if (this == &other) {
+                return *this;
+            }
+
+            // 2. Free old memory
+            delete[] arr;
+
+            // 3. Copy scalar members
+            sz = other.sz;
+            mx = other.mx;
+
+            // 4. Allocate new memory and copy data
+            arr = new T[mx];
+            for (int i = 0; i < sz; i++){
+                arr[i] = other.arr[i];
+            }
+
+            // 5. Return self-reference
+            return *this;
+        }
+        
+        void push_back(){
+            // base case, does nothing.
+        }
+        
+        template <typename... Args>
+        void push_back(T val, Args... args){
+            push(val);
+            push_back(args...);
+        }
+        
+        bool full(){
+            return (this->sz == this->mx);
+        }
+
+        bool empty(){
+            return (this->sz == 0);
+        }
+        
+        T push(T val){
+            if (this->full()){
+                expand();
+            }
+            this->arr[this->sz++] = val;
+            return val;
+        }
+
+        T pop_back(){
+            if (this->empty()){
+                return T{};
+            }else{
+                this->sz--;
+                return arr[this->sz];
+            }
+        }
+
+        T & operator[](int ind){
+            if (ind < 0){
+                throw "Index should be atleast 0 !";
+            }
+            if (ind < this->mx){
+                return this->arr[ind];
+            }else{
+                throw "Out of range !";
+            }
+        }
+
+        int size(){
+            return this->sz;
+        }
+
+        ~Vector(){
+            delete[] this->arr;
+        }
+};
+
+template <class F, class S>
+class Pair{
+    public:
+        F first;
+        S second;
+        Pair() : first(F{}), second(S{}) {}
+        Pair(F first, S second){
+            this->first = first;
+            this->second = second;
+        }
 };
