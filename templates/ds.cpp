@@ -3,7 +3,7 @@
 using namespace std;
 
 template <class T>
-class Heap{
+class MaxHeap{
     T * hp;
 
     int par(int curr)
@@ -24,14 +24,14 @@ class Heap{
     int sz;
     int n;
     public:
-        Heap(int n, bool (*comp)(T & a, T & b)){
+        MaxHeap(int n, bool (*comp)(T & a, T & b)){
             this->hp = (T *) malloc(sizeof(T) * (n+1));
             this->comp = comp;
             this->sz = 0;
             this->n = n;
         }
 
-        ~Heap(){
+        ~MaxHeap(){
             free(this->hp);
             this->hp = nullptr;
         }
@@ -104,6 +104,18 @@ class Heap{
         T top(){
             return this->hp[1];
         }
+
+        bool empty(){
+            return (sz == 0);
+        }
+
+        int size(){
+            return sz;
+        }
+
+        bool full(){
+            return (sz >= n);
+        }
     
         void show(){
             int e = this->sz;
@@ -160,7 +172,7 @@ class Heap{
             }
             reverse(this->hp+1, this->hp + sz + 1);
             for (int i=1;i<=sz;i++){
-                cout << this->hp[i].name << " ";
+                cout << this->hp[i].first << " " << this->hp[i].second << endl;
             }cout << endl;
         }
 };
